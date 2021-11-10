@@ -39,14 +39,11 @@ export default function InputForm(props: { setPosts: Function }) {
             />
           </div>
           <div className="relative mb-4">
-            <label
-              htmlFor="message"
-              className="leading-7 text-sm text-gray-600"
-            >
-              Message
+            <label htmlFor="text" className="leading-7 text-sm text-gray-600">
+              Text
             </label>
             <textarea
-              {...register("message")}
+              {...register("text")}
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-24 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"
             ></textarea>
           </div>

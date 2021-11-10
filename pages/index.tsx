@@ -29,7 +29,7 @@ const Home: NextPage = () => {
   );
 
   return (
-    <div className=" w-full flex flex-col">
+    <div className=" w-full flex flex-col bg-gray-200">
       <InputForm setPosts={setPosts} />
       <PostsContainer>{posts}</PostsContainer>
     </div>
