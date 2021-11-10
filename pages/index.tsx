@@ -1,37 +1,57 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
+import { Key, useState } from "react";
 import InputForm from "../components/InputForm";
-import Post from "../components/Post";
-import PostsContainer from "../components/PostsContainer";
-import styles from "../styles/Home.module.css";
-import { PostType } from "../types";
+import PostComponent from "../components/PostComponent";
+import PostsContainer from "../components/PostsContainerComponent";
+import { PrismaClient, Post } from "@prisma/client";
 
-const data: Array<PostType> = [
-  {
-    name: "John Snow",
-    text: "Hello world!",
-  },
-  {
-    name: "Gandalf White",
-    text: "You shall not pass!!!",
-  },
-  {
-    name: "Lorem Impus",
-    text: "Edison bulb retro cloud bread echo park, helvetica stumptown taiyaki taxidermy 90's cronut +1 kinfolk. Single-origin coffee ennui shaman taiyaki vape DIY tote bag drinking vinegar cronut adaptogen squid fanny pack vaporware. Man bun next level coloring book skateboard four loko knausgaard. Kitsch keffiyeh master cleanse direct trade indigo juice before they sold out gentrify plaid gastropub normcore XOXO 90's pickled cindigo jean shorts. Slow-carb next level shoindigoitch ethical authentic, yr scenester sriracha forage franzen organic drinking",
-  },
-];
+const prisma = new PrismaClient();
 
-const Home: NextPage = () => {
-  const [posts, setPosts] = useState(
-    data.map((obj, i) => <Post key={i} data={obj} />)
-  );
+export async function getServerSideProps() {
+  const posts: Post[] = await prisma.post.findMany();
+  return {
+    props: {
+      initialPosts: posts,
+    },
+  };
+}
+
+export async function savePost(post: Post) {
+  const response = await fetch("/api/posts", {
+    method: "POST",
+    body: JSON.stringify(post),
+  });
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  return await response.json();
+}
+
+export async function deletePost(post: Post) {
+  const response = await fetch("/api/posts", {
+    method: "DELETE",
+    body: JSON.stringify({ id: post.id }),
+  });
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  return await response.json();
+}
+const Home: NextPage = ({ initialPosts }: any) => {
+  const [posts, setPosts] = useState(initialPosts);
 
   return (
-    <div className=" w-full flex flex-col bg-gray-200">
+    <div className=" w-full flex flex-col ">
       <InputForm setPosts={setPosts} />
-      <PostsContainer>{posts}</PostsContainer>
+      <PostsContainer>
+        {posts.map((obj: Post, i: Key | null | undefined) => (
+          <PostComponent key={i} data={obj} setPosts={setPosts} />
+        ))}
+      </PostsContainer>
     </div>
   );
 };

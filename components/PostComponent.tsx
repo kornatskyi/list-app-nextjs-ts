@@ -1,12 +1,39 @@
-import React from "react";
-import { PostType } from "../types";
+import { Post } from "@prisma/client";
+import React, { SetStateAction } from "react";
+import { deletePost } from "../pages";
 
-const Post = (props: { data: PostType }): JSX.Element => {
-  const { data } = props;
-
+const PostComponent = (props: {
+  data: Post;
+  setPosts: Function;
+}): JSX.Element => {
+  const { data, setPosts } = props;
+  const onClickHandler = async () => {
+    try {
+      await deletePost(data);
+      setPosts((posts: Post[]) => {
+        return posts.filter((post) => !(post.id === data.id));
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className=" container px-5 py-5 mx-auto text-gray-600 lg:w-1/3 md:w-1/2 p-2 flex flex-col relative  z-10 w-full">
-      <div className=" flex flex-col items-center bg-white rounded-lg w-full px-5  py-10 shadow-md">
+      <div className=" flex flex-col items-center bg-white rounded-lg w-full px-5  py-5 shadow-md">
+        <div
+          className="self-end  top-0 right-0 cursor-pointer   text-sm z-50"
+          onClick={onClickHandler}
+        >
+          <svg
+            className="fill-current text-gray-600 hover:text-red-500"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+          >
+            <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
+          </svg>
+        </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
@@ -25,4 +52,4 @@ const Post = (props: { data: PostType }): JSX.Element => {
   );
 };
 
-export default Post;
+export default PostComponent;
