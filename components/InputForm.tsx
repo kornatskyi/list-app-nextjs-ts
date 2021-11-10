@@ -1,17 +1,17 @@
 import { Post } from "@prisma/client";
 import React, { SetStateAction } from "react";
 import { FieldValue, SubmitHandler, useForm } from "react-hook-form";
-import { savePost } from "../pages";
+import { getPosts, savePost } from "../pages";
 
 export default function InputForm(props: { setPosts: Function }) {
   const { setPosts } = props;
 
   const { register, handleSubmit } = useForm();
   const onSubmit = handleSubmit(async (data: any) => {
-    console.log(data);
     try {
       await savePost(data);
-      setPosts((posts: Post[]) => [...posts, data]);
+      const updatedPosts: Post[] = await getPosts();
+      setPosts(updatedPosts);
     } catch (err) {
       console.log(err);
     }

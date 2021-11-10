@@ -18,6 +18,16 @@ export async function getServerSideProps() {
   };
 }
 
+export async function getPosts() {
+  const response = await fetch("/api/posts", {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  return await response.json();
+}
+
 export async function savePost(post: Post) {
   const response = await fetch("/api/posts", {
     method: "POST",
@@ -41,7 +51,8 @@ export async function deletePost(post: Post) {
 
   return await response.json();
 }
-const Home: NextPage = ({ initialPosts }: any) => {
+const Home: NextPage = (props: any) => {
+  const { initialPosts } = props;
   const [posts, setPosts] = useState(initialPosts);
 
   return (

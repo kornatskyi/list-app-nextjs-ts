@@ -7,16 +7,17 @@ export default async function setPost(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method == "POST") {
+  if (req.method === "GET") {
+    const posts = await prisma.post.findMany();
+    return res.json(posts);
+  } else if (req.method === "POST") {
     const postData = JSON.parse(req.body);
-
     const savedPost = await prisma.post.create({
       data: postData,
     });
     return res.json(savedPost);
   } else if (req.method == "DELETE") {
     const postId = JSON.parse(req.body).id;
-
     const deletedPosts = await prisma.post.delete({
       where: {
         id: postId,
